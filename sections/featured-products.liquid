@@ -1,0 +1,49 @@
+{% schema %}
+{
+  "name": "Featured Products",
+  "settings": [
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection"
+    },
+    {
+      "type": "number",
+      "id": "products_to_show",
+      "label": "Number of products to show",
+      "default": 4
+    }
+  ],
+  "presets": [
+    {
+      "name": "Featured Products"
+    }
+  ]
+}
+{% endschema %}
+
+<div class="featured-products-section" data-section-id="{{ section.id }}">
+  <div class="grid">
+    {% assign cart_items = cart.items | map: 'id' %}
+    {% assign counter = 0 %}
+
+    {% for product in collections[section.settings.collection].products %}
+      {% if counter >= section.settings.products_to_show %}
+        {% break %}
+      {% endif %}
+
+      {% unless cart_items contains product.id %}
+        <div class="featured-product-card" data-product-id="{{ product.id }}">
+          <img src="{{ product.featured_image | img_url: '400x' }}" alt="{{ product.title }}" class="featured-product-img">
+          <h3 class="featured-product-title">{{ product.title }}</h3>
+          <p class="featured-product-price">{{ product.price | money }}</p>
+          <button class="featured-product-add-to-cart" data-product-id="{{ product.id }}">Add to Cart</button>
+        </div>
+        {% assign counter = counter | plus: 1 %}
+      {% endunless %}
+    {% endfor %}
+  </div>
+</div>
+
+<script src="{{ 'featured-products.js' | asset_url }}"></script>
+<link rel="stylesheet" href="{{ 'featured-products.css' | asset_url }}">
