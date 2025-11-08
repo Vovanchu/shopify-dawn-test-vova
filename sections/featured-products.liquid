@@ -33,11 +33,16 @@
       {% endif %}
 
       {% unless cart_items contains product.id %}
-        <div class="featured-product-card" data-product-id="{{ product.id }}">
-          <img src="{{ product.featured_image | img_url: '400x' }}" alt="{{ product.title }}" class="featured-product-img">
+        <div class="featured-product-card">
+          <img
+            src="{{ product.featured_image | default: product.images.first | img_url: '400x400' }}"
+            alt="{{ product.title }}"
+            class="featured-product-img">
           <h3 class="featured-product-title">{{ product.title }}</h3>
           <p class="featured-product-price">{{ product.price | money }}</p>
-          <button class="featured-product-add-to-cart" data-product-id="{{ product.id }}">Add to Cart</button>
+          <button class="featured-product-add-to-cart" data-variant-id="{{ product.variants.first.id }}">
+            Add to Cart
+          </button>
         </div>
         {% assign counter = counter | plus: 1 %}
       {% endunless %}

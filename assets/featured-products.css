@@ -53,13 +53,13 @@
 
 @media (min-width: 768px) {
   .featured-products-section .featured-product-card {
-    flex: 1 1 calc(50% - 1rem); /* 2 в ряд */
+    flex: 1 1 calc(50% - 1rem);
   }
 }
 
-/* Для великих екранів: можна залишити по 2 або більше, якщо хочеш */
+
 @media (min-width: 1200px) {
   .featured-products-section .featured-product-card {
-    flex: 1 1 calc(25% - 1rem); /* 4 в ряд */
+    flex: 1 1 calc(50% - 1rem);
   }
 }

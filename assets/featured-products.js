@@ -1,41 +1,42 @@
-document.addEventListener('DOMContentLoaded', () => {
-  const section = document.querySelector('.featured-products-section');
+document.addEventListener('DOMContentLoaded', function() {
+  const buttons = document.querySelectorAll('.featured-product-add-to-cart');
 
-  if (!section) return;
+  buttons.forEach(button => {
+    button.addEventListener('click', function() {
+      const variantId = this.dataset.variantId;
+      const btn = this;
 
-  section.addEventListener('click', async (e) => {
-    if (!e.target.classList.contains('featured-product-add-to-cart')) return;
+      btn.disabled = true;
+      const originalText = btn.textContent;
+      btn.textContent = 'Adding...';
 
-    const button = e.target;
-    const productId = button.dataset.productId;
-
-    button.disabled = true;
-    button.textContent = 'Adding...';
-
-    try {
-      const response = await fetch('/cart/add.js', {
+      fetch('/cart/add.js', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'application/json'
         },
-        body: JSON.stringify({ id: productId, quantity: 1 }),
+        body: JSON.stringify({ id: variantId, quantity: 1 })
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log('Product added:', data);
+
+        document.dispatchEvent(new CustomEvent('cart:refresh'));
+
+        alert('Product added to cart!');
+
+        btn.disabled = false;
+        btn.textContent = originalText;
+
+      })
+      .catch(error => {
+        console.error('Error adding product:', error);
+        alert('Error adding product to cart. Please try again.');
+
+        btn.disabled = false;
+        btn.textContent = originalText;
       });
-
-      if (!response.ok) throw new Error('Failed to add product');
-
-      // Оновлюємо pop-up корзину Dawn
-      const cartResponse = await fetch('/cart?view=mini');
-      const cartHTML = await cartResponse.text();
-      document.querySelector('cart-drawer').innerHTML = cartHTML;
-
-      // Приховуємо продукт із секції
-      const productCard = button.closest('.featured-product-card');
-      productCard.remove();
-
-    } catch (err) {
-      console.error(err);
-      button.disabled = false;
-      button.textContent = 'Add to Cart';
-    }
+    });
   });
 });
